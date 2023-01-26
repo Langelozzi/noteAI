@@ -1,92 +1,309 @@
 /* normalize css starts here */
-*,
+/* *,
 *::before,
 *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
 /* normalize css ends here */
 
-html {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
-    sans-serif;
-  color: #222;
+/* html {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif;
+    color: #222;
 }
 
 body {
-  width: 350px;
-  height: 300px;
+    width: 350px;
+    height: 300px;
 }
 
 .app {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+} */
+
+#title {
+    padding-left: 5px;
+    display: table-cell;
+    vertical-align: middle;
 }
 
-.title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
+.title-font {
+    font-family: 'Prompt', sans-serif;
+    font-weight: 400;
+    font-size: 1.5em;
 }
 
-.subtitle {
-  font-size: 12px;
+body {
+    width: 400px !important;
+    /* height: 200px !important; */
 }
 
-code {
-  font-size: 12px;
-  font-family: inherit;
-  background-color: rgba(254, 237, 185, 0.3);
-  padding: 2px 4px;
-  border-radius: 2px;
+ol {
+    margin-left: 55px;
+    margin-right: 55px;
 }
 
-.counter-label {
-  font-size: 12px;
-  margin-bottom: 5px;
+.navbar {
+    padding: 10px 0px !important;
 }
 
-.counter {
-  font-size: 36px;
-  font-weight: 700;
+.title-container {
+    display: table;
 }
 
-.button-container {
-  margin-top: 15px;
+.button-holder {
+    width: 100%;
+    padding: 15px;
 }
 
-.button {
-  border: 0;
-  display: inline-block;
-  padding: 10px 20px;
-  margin-right: 4px;
-  margin-left: 4px;
-  background-color: bisque;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-  user-select: none;
+.btn {
+    width: 100% !important;
 }
 
-.button:focus {
-  outline: none;
+#search-icon {
+    width: 50%;
 }
 
-.button:hover {
-  transform: scale(1.1);
+.nav-icon {
+    padding-left: 5px;
 }
 
-.divider {
-  margin: 30px auto 25px;
-  width: 50px;
-  border: 0.5px dashed #000;
-  opacity: 0.1;
+.image-holder {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-icon:hover {
+    text-decoration: none !important;
+}
+
+.opener {
+    color: grey;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.spinner-border {
+    color: #c9c9f8 !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.show {
+    display: block !important;
+}
+
+.note-bullet {
+    font-size: 0.85em;
+    padding-bottom: 5px;
+}
+
+.loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#generate-btn {
+    background-color: #9a9afb !important;
+    color: rgb(255, 255, 255);
+}
+
+
+ul {
+    margin-bottom: 0 !important;
+    margin-left: 16px;
+    padding: 0;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.8em;
+    text-align: center;
+    animation: fadeIn .5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+#msg {
+    color: white;
+    font-size: 0.8rem;
+    text-align: center;
+    animation: fade 3s linear;
+}
+
+@keyframes fade {
+
+    0%,
+    100% {
+        opacity: 0
+    }
+
+    50% {
+        opacity: 1
+    }
+}
+
+.btn-error {
+    animation: horizontal-shaking 0.4s ease-in-out infinite;
+}
+
+@keyframes horizontal-shaking {
+    0% {
+        transform: translateX(0)
+    }
+
+    25% {
+        transform: translateX(5px)
+    }
+
+    50% {
+        transform: translateX(-5px)
+    }
+
+    75% {
+        transform: translateX(5px)
+    }
+
+    100% {
+        transform: translateX(0)
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: rgb(32, 32, 36) !important;
+    }
+
+    .navbar {
+        background-color: rgb(41, 42, 45) !important;
+    }
+
+    #title,
+    #msg,
+    .note-bullet {
+        color: white;
+    }
+
+    .opener {
+        color: rgb(232, 230, 230);
+    }
+
+    /* For the background of the generated text */
+    .bg-card {
+        background-color: rgb(41, 42, 45) !important;
+        border-radius: 10px;
+        padding: 20px;
+        padding-top: 8px;
+        /* padding-bottom: 0 !important; */
+        margin: 20px;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .navbar {
+        background-color: #f8f9fa !important;
+        border-bottom: 0.5px rgba(178, 177, 177, 0.561) solid;
+    }
+
+    body {
+        background-color: rgb(255, 255, 255) !important;
+    }
+
+    #title,
+    #msg,
+    .note-bullet {
+        color: rgb(28, 28, 28);
+    }
+
+    .opener {
+        color: grey;
+    }
+
+    #settings-img {
+        /* background: url("/images/gear.png") fixed top center no-repeat; */
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        z-index: -1;
+    }
+
+    /* For the background of the generated text */
+    .bg-card {
+        background-color: #f8f9fa !important;
+        border-radius: 10px;
+        padding: 20px;
+        padding-top: 8px;
+        /* padding-bottom: 0 !important; */
+        margin: 20px;
+    }
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 {
+    font-size: 18px;
+}
+
+.material-icons.md-24 {
+    font-size: 24px;
+}
+
+.material-icons.md-36 {
+    font-size: 36px;
+}
+
+.material-icons.md-48 {
+    font-size: 48px;
+}
+
+/* Rules for using icons as black on a light background. */
+.material-icons.md-dark {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.material-icons.md-dark.md-inactive {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+/* Rules for using icons as white on a dark background. */
+.material-icons.md-light {
+    color: rgba(255, 255, 255, 1);
+}
+
+.material-icons.md-light.md-inactive {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+#copy-btn {
+    background-color: transparent;
+    border: none;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.copy-btn-container {
+    display: flex;
+    align-content: right;
+    justify-content: right;
+    transform: translateX(12px)
 }

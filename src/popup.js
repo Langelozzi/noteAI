@@ -2,111 +2,200 @@
 
 import './popup.css';
 
-(function () {
-  // We will make use of Storage API to get and store `count` value
-  // More information on Storage API can we found at
-  // https://developer.chrome.com/extensions/storage
+function countWords(str) {
+    return str.trim().split(/\s+/).length;
+}
 
-  // To get storage access, we have to mention it in `permissions` property of manifest.json file
-  // More information on Permissions can we found at
-  // https://developer.chrome.com/extensions/declare_permissions
-  const counterStorage = {
-    get: (cb) => {
-      chrome.storage.sync.get(['count'], (result) => {
-        cb(result.count);
-      });
-    },
-    set: (value, cb) => {
-      chrome.storage.sync.set(
-        {
-          count: value,
-        },
-        () => {
-          cb();
-        }
-      );
-    },
-  };
+function getSelectedText() {
+    var text = "";
 
-  function setupCounter(initialValue = 0) {
-    document.getElementById('counter').innerHTML = initialValue;
-
-    document.getElementById('incrementBtn').addEventListener('click', () => {
-      updateCounter({
-        type: 'INCREMENT',
-      });
-    });
-
-    document.getElementById('decrementBtn').addEventListener('click', () => {
-      updateCounter({
-        type: 'DECREMENT',
-      });
-    });
-  }
-
-  function updateCounter({ type }) {
-    counterStorage.get((count) => {
-      let newCount;
-
-      if (type === 'INCREMENT') {
-        newCount = count + 1;
-      } else if (type === 'DECREMENT') {
-        newCount = count - 1;
-      } else {
-        newCount = count;
-      }
-
-      counterStorage.set(newCount, () => {
-        document.getElementById('counter').innerHTML = newCount;
-
-        // Communicate with content script of
-        // active tab by sending a message
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          const tab = tabs[0];
-
-          chrome.tabs.sendMessage(
-            tab.id,
-            {
-              type: 'COUNT',
-              payload: {
-                count: newCount,
-              },
-            },
-            (response) => {
-              console.log('Current count value passed to contentScript file');
-            }
-          );
-        });
-      });
-    });
-  }
-
-  function restoreCounter() {
-    // Restore count value
-    counterStorage.get((count) => {
-      if (typeof count === 'undefined') {
-        // Set counter value as 0
-        counterStorage.set(0, () => {
-          setupCounter(0);
-        });
-      } else {
-        setupCounter(count);
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', restoreCounter);
-
-  // Communicate with background file by sending a message
-  chrome.runtime.sendMessage(
-    {
-      type: 'GREETINGS',
-      payload: {
-        message: 'Hello, my name is Pop. I am from Popup.',
-      },
-    },
-    (response) => {
-      console.log(response.message);
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        // if they are using internet explorer
+        text = document.selection.createRange().text;
     }
-  );
-})();
+
+    text = text.replace(/[^A-Za-z0-9,\.,?!() ]/g, " ");
+    return text;
+}
+
+async function getCurrentTab() {
+    let queryOptions = { active: true, currentWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
+
+async function getGeneratedNotes(prompt) {
+    try {
+        const response = await fetch("http://localhost:3000/create-notes", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ prompt: prompt })
+        })
+
+        const data = await response.json();
+        return data.notes;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+async function submitQuery(selectedText) {
+    const resultDiv = document.getElementById("result-container");
+    const resultCard = document.querySelector(".bg-card");
+
+    // show the popup
+    resultCard.classList.remove("hidden");
+    // clear the results
+    resultDiv.innerHTML = "";
+
+    // show the loading spinner
+    const loadingSpinner = document.getElementById("loading-spinner");
+    loadingSpinner.classList.remove("hidden");
+
+    // send request
+    const notes = await getGeneratedNotes(selectedText);
+
+    if (notes && notes.includes("-")) {
+        let formattedResults = "<ul>";
+
+        notes
+            .split("-")
+            .slice(1)
+            .forEach((element) => {
+                formattedResults += `<li class="note-bullet">${element.trim()}</li>`;
+            });
+
+        formattedResults += "</ul>";
+
+        resultDiv.innerHTML = formattedResults;
+    } else if (notes && notes.includes("•")) {
+        let formattedResults = "<ul>";
+
+        notes
+            .split("•")
+            .slice(1)
+            .forEach((element) => {
+                formattedResults += `<li class="note-bullet">${element.trim()}</li>`;
+            });
+
+        formattedResults += "</ul>";
+
+        resultDiv.innerHTML = formattedResults;
+    } else if (notes && notes.includes("*")) {
+        let formattedResults = "<ul>";
+
+        notes
+            .split("*")
+            .slice(1)
+            .forEach((element) => {
+                formattedResults += `<li class="note-bullet">${element.trim()}</li>`;
+            });
+
+        formattedResults += "</ul>";
+
+        resultDiv.innerHTML = formattedResults;
+    } else if (notes && !notes.includes("-") && !notes.includes("•")) {
+        let formattedResults = "<ul>";
+
+        notes
+            .split(".")
+            .slice(1)
+            .forEach((element) => {
+                formattedResults += `<li class="note-bullet">${element.trim()}</li>`;
+            });
+
+        formattedResults += "</ul>";
+
+        resultDiv.innerHTML = formattedResults;
+    } else {
+        resultDiv.innerHTML =
+            '<p class="error-msg">Error: Could not generate notes, please try again.</p>';
+    }
+
+    // hide the loading spinner
+    loadingSpinner.classList.add("hidden");
+}
+
+function tooLittleWordError() {
+    // shake the button
+    const generateBtn = document.getElementById("generate-btn");
+    generateBtn.classList.add("btn-error");
+
+    const errorMessageParagraph = document.getElementById("error-msg");
+    errorMessageParagraph.classList.remove("hidden");
+    errorMessageParagraph.innerHTML = "ERROR: Please select more than 10 words.";
+
+    // stop button shake
+    setTimeout(() => {
+        generateBtn.classList.remove("btn-error");
+    }, 800);
+}
+
+function tooManyWords() {
+    // shake the button
+    const generateBtn = document.getElementById("generate-btn");
+    generateBtn.classList.add("btn-error");
+
+    const errorMessageParagraph = document.getElementById("error-msg");
+    errorMessageParagraph.classList.remove("hidden");
+    errorMessageParagraph.innerHTML =
+        "ERROR: Please limit your selection to less than 2000 words.";
+
+    // stop button shake
+    setTimeout(() => {
+        generateBtn.classList.remove("btn-error");
+    }, 800);
+}
+
+async function onClickHandler() {
+    const tab = await getCurrentTab();
+    // executes the script in the context of the current tab
+    const scriptRes = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: getSelectedText,
+    });
+    const selectedText = scriptRes[0].result;
+
+    if (!selectedText || countWords(selectedText) < 10) {
+        tooLittleWordError();
+    } else if (countWords(selectedText) > 2000) {
+        tooManyWords();
+    } else {
+        submitQuery(selectedText);
+    }
+}
+
+function CopyToClipboard() {
+    var element = document.getElementById("result-container");
+    var elementText = element.innerHTML
+        .replaceAll('<li class="note-bullet">', "")
+        .replaceAll("</li>", "\n")
+        .replaceAll("<ul>", "")
+        .replaceAll("</ul>", "");
+    navigator.clipboard.writeText(elementText);
+}
+
+function handleCopyButton() {
+    CopyToClipboard();
+
+    const messageParagraph = document.getElementById("msg");
+    messageParagraph.classList.remove("hidden");
+    messageParagraph.innerHTML = "Copied to clipboard!";
+
+    setTimeout(() => {
+        messageParagraph.classList.add("hidden");
+    }, 3000);
+}
+
+// Listeners
+document
+    .getElementById("generate-btn")
+    .addEventListener("click", onClickHandler);
+
+document.getElementById("copy-btn").addEventListener("click", handleCopyButton);
