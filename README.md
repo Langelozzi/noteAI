@@ -1,4 +1,4 @@
-# <img src="note-ai/public/icons/icon-48.png" width="45" align="left"> Note Ai
+# <img src="note-ai/public/icons/icon-48.png" width="45" align="left"> noteAI
 
 My Chrome Extension
 
