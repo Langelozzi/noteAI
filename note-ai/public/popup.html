@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Chrome Extension</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css" />
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+</head>
+
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="container-fluid">
+                <div class="title-container">
+                    <img src="/icons/icon-48.png" style="margin: 0px 5px;" class="d-inline-block align-text-top"
+                        width="32" height="32">
+                    <span id="title" class="title-font">noteAI</span>
+                </div>
+                <div>
+                    <!-- <a href="/settings.html" class="nav-icon"> -->
+                    <div id="settings-img"></div>
+                    <!-- </a> -->
+                </div>
+            </div>
+        </nav>
+        <div class="text-holder">
+            <div class="image-holder">
+                <img id="search-icon" src="/images/search.png">
+            </div>
+            <ol>
+                <li class="opener">Highlight some text in your browser</li>
+                <li class="opener">Press generate to get summarized notes</li>
+            </ol>
+        </div>
+
+        <p id="msg" class="hidden"></p>
+
+        <div class="bg-card hidden">
+            <div class="copy-btn-container">
+                <button id="copy-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard">
+                    <img src="/images/clipboard.png" width="20" height="20">
+                </button>
+            </div>
+
+            <div id="result-container">
+
+            </div>
+
+            <div class="loading-spinner-container">
+                <div id="loading-spinner" class="spinner-border hidden" role="status">
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 0; width: 0; overflow: hidden;">
+            <textarea name="clipboard-contents" id="clipboard-contents" style="opacity: 0;"></textarea>
+        </div>
+
+        <div class="button-holder">
+            <button id="generate-btn" class="btn" type="button">Generate</button>
+        </div>
+        <p id="error-msg" class="error-msg hidden"></p>
+
+    </div>
+
+    <script src="popup.js"></script>
+
+    <!--
+      This HTML file opens when you click on icon from the toolbar.
+
+      To begin the development, run `npm run watch`.
+      To create a production bundle, use `npm run build`.
+    -->
+</body>
+
+</html>
