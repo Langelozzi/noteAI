@@ -61,11 +61,11 @@ async function submitQuery(selectedText) {
     // send request
     const notes = await getGeneratedNotes(selectedText);
 
-    if (notes && notes.includes("-")) {
+    if (notes && notes.includes("\n-")) {
         let formattedResults = "<ul>";
 
         notes
-            .split("-")
+            .split("\n-")
             .slice(1)
             .forEach((element) => {
                 formattedResults += `<li class="note-bullet">${element.trim()}</li>`;
@@ -155,12 +155,18 @@ function tooManyWords() {
 
 async function onClickHandler() {
     const tab = await getCurrentTab();
-    // executes the script in the context of the current tab
-    const scriptRes = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: getSelectedText,
-    });
-    const selectedText = scriptRes[0].result;
+    let selectedText = "";
+
+    if (tab.url.includes(".pdf")) {
+        selectedText = getClipboardContents();
+    } else {
+        // executes the script in the context of the current tab
+        const scriptRes = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            function: getSelectedText,
+        });
+        selectedText = scriptRes[0].result;
+    }
 
     if (!selectedText || countWords(selectedText) < 10) {
         tooLittleWordError();
@@ -179,6 +185,18 @@ function CopyToClipboard() {
         .replaceAll("<ul>", "")
         .replaceAll("</ul>", "");
     navigator.clipboard.writeText(elementText);
+}
+
+function getClipboardContents() {
+    const textarea = document.getElementById("clipboard-contents");
+    textarea.select()
+
+    document.execCommand("paste");
+
+    const data = textarea.value;
+    textarea.val = "";
+
+    return data;
 }
 
 function handleCopyButton() {
