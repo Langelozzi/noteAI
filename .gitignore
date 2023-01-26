@@ -2,6 +2,7 @@
 
 # dependencies
 /api/node_modules
+/api/config.json
 /note-ai/node_modules
 
 # production
